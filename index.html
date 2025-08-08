@@ -18,77 +18,76 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Manrope:wght@300;500;700&display=swap" rel="stylesheet"/>
 
   <style>
-    :root { color-scheme: light; }
+    :root { color-scheme: dark; }
     body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
-    .glass { backdrop-filter: blur(10px); background: rgba(255,255,255,.6); }
-    .card { border-radius: 1rem; box-shadow: 0 10px 24px rgba(0,0,0,.07); }
-    /* Light Indian motif using gradients (sky blues + off-white) */
-    .bg-motif {
-      background:
-      linear-gradient(180deg, #000000, #0a0a0a 40%, #000000);
-    }
-    .link-underline { text-decoration: underline; text-underline-offset: 3px; }
-    .accent-line { background: linear-gradient(90deg, #60a5fa, #93c5fd); height: 2px; border-radius: 999px; }
 
-    /* Spinning CD */
-    .cd {
-      width: 42px; height: 42px; border-radius: 50%;
-      background: radial-gradient(circle at 50% 50%, #ffffff 0 18%, #cfe8ff 19% 46%, #9bd0ff 47% 60%, #eaf5ff 61% 100%);
-      box-shadow: inset 0 0 0 2px #e5f0ff, inset 0 0 0 8px #ffffff;
-      position: relative; flex-shrink: 0;
-      animation: spin 6s linear infinite;
+    /* ===== THEME: dark bg + white text with a nice gradient ===== */
+    .bg-motif {
+      /* layered dark gradients with a soft vignette */
+      background:
+        radial-gradient(1200px 700px at 10% -10%, rgba(80,80,80,.12), transparent 60%),
+        radial-gradient(800px 500px at 110% 0%, rgba(80,80,80,.10), transparent 60%),
+        linear-gradient(180deg, #0a0a0a 0%, #0b0b0b 35%, #060606 100%);
     }
-    .cd::after {
-      content: "Bollytekk";
-      position: absolute; inset: 0;
-      font-size: 8px; color: #0a2540; display: grid; place-items: center;
-      letter-spacing: .5px; text-transform: uppercase; font-weight: 700;
+    .glass { backdrop-filter: blur(10px); background: rgba(14,14,14,.6); }
+    .card { border-radius: 1rem; background: #0f0f10; border: 1px solid #1f2937; box-shadow: 0 10px 24px rgba(0,0,0,.35); }
+    .card.hoverable { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+    .card.hoverable:hover {
+      transform: translateY(-2px);
+      border-color: rgba(96,165,250,.6); /* sky-400 */
+      box-shadow: 0 10px 30px rgba(56,189,248,.18), 0 0 0 1px rgba(125,211,252,.12) inset;
     }
+    .accent-line { background: linear-gradient(90deg, #60a5fa, #93c5fd); height: 2px; border-radius: 999px; }
+    .link-underline { text-decoration: underline; text-underline-offset: 3px; }
+
+    /* Text colors */
+    body, p, h1, h2, h3, h4, a { color: #e5e7eb; }       /* neutral-200 */
+    .muted { color: #9ca3af; }                           /* neutral-400/500 */
+    .subtle { color: #6b7280; }                          /* neutral-500/600 */
+
+    /* ===== Floating CD button (bottom-right) ===== */
+    .floating-cd {
+      position: fixed; right: 18px; bottom: 18px; z-index: 70;
+      width: 64px; height: 64px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: radial-gradient(circle at 50% 45%, #1f2937 0 30%, #111827 31% 60%, #0b0f16 61% 100%);
+      box-shadow: 0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(148,163,184,.18) inset;
+      cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, background .2s ease;
+    }
+    .floating-cd:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 16px 38px rgba(0,0,0,.6); }
+    .floating-cd.playing .disc { animation: spin 6s linear infinite; }
+
+    /* The disc (SVG) */
+    .disc { width: 48px; height: 48px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Mini player bar */
-    .mini-player {
-      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
-      width: min(960px, 92vw); z-index: 60;
-    }
-
-    /* Fullscreen player modal */
-    .modal {
-      position: fixed; inset: 0; display: none; z-index: 70;
-    }
+    /* ===== Fullscreen Player Modal (dark blur) ===== */
+    .modal { position: fixed; inset: 0; display: none; z-index: 80; }
     .modal.show { display: grid; }
-    .modal .backdrop { position: absolute; inset: 0; backdrop-filter: blur(14px); background: rgba(255,255,255,.65); }
+    .modal .backdrop { position: absolute; inset: 0; backdrop-filter: blur(16px); background: rgba(8,8,8,.65); }
     .modal .sheet { position: relative; margin: auto; width: min(920px, 94vw); }
     .big-cd {
-      width: 220px; height: 220px; border-radius: 50%;
-      background: radial-gradient(circle at 50% 50%, #fff 0 18%, #cfe8ff 19% 46%, #9bd0ff 47% 60%, #eaf5ff 61% 100%);
-      box-shadow: inset 0 0 0 4px #e5f0ff, inset 0 0 0 22px #ffffff, 0 10px 40px rgba(0,0,0,.08);
-      animation: spin 9s linear infinite;
+      width: 240px; height: 240px; border-radius: 50%;
+      background: radial-gradient(circle at 50% 45%, #1f2937 0 30%, #111827 31% 60%, #0b0f16 61% 100%);
+      box-shadow: inset 0 0 0 6px rgba(148,163,184,.12), 0 10px 40px rgba(0,0,0,.5);
       position: relative;
-    }
-    .big-cd::after {
-      content: "BOLLYTEKK";
-      position: absolute; inset: 0;
-      font-size: 16px; color: #0a2540; display: grid; place-items: center;
-      letter-spacing: 2px; text-transform: uppercase; font-weight: 800;
+      animation: spin 9s linear infinite;
     }
 
     /* Play overlay (for autoplay block) */
     #playOverlay { display: none; }
-    .show { display:block; }
+    .show-block { display: block; }
 
-    /* Reveal on scroll */
+    /* Reveal on scroll + smooth */
     .reveal { opacity: 0; transform: translateY(12px); transition: opacity .6s ease, transform .6s ease; }
     .reveal.in { opacity: 1; transform: translateY(0); }
-
-    /* Smooth scroll */
     html { scroll-behavior: smooth; }
   </style>
 </head>
-<body class="text-neutral-900 bg-motif">
+<body class="bg-motif">
 
   <!-- Header -->
-  <header class="sticky top-0 z-40 glass border-b border-blue-100">
+  <header class="sticky top-0 z-40 glass border-b border-neutral-800">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="#top" class="text-xl font-extrabold tracking-tight">BOLLYTEKK</a>
       <nav class="hidden sm:flex gap-6 text-sm">
@@ -107,11 +106,11 @@
       <div class="flex-1 reveal">
         <h1 class="text-4xl sm:text-6xl font-extrabold leading-tight">
           Bollytekk
-          <span class="block text-sky-700 text-2xl sm:text-3xl mt-2">by Reesh • with Roro & Saif</span>
+          <span class="block muted text-2xl sm:text-3xl mt-2">Reesh • Roro • Saif</span>
         </h1>
 
         <!-- EDIT: ABOUT / DESCRIPTION -->
-        <p class="mt-5 text-neutral-700 max-w-xl">
+        <p class="mt-5 muted max-w-xl">
           Bollytekk is a genre pioneered by Reesh, Roro, and Saif — a genre-bending fusion of traditional Indian sounds and modern hip-hop energy. Inspired by the deep rhythms of tablas, the shimmering melodies of sitars, and the cinematic sweep of Bollywood, Bollytekk blends them with hard-hitting trap drums, lush cloud-rap atmospheres, and intricate lyricism. It’s more than just music — it’s a bridge between cultures, honoring Indian heritage while pushing global sound forward. Every track is a celebration of beauty, identity, and rhythm, crafted to move both heart and head.
         </p>
 
@@ -119,55 +118,55 @@
         <div id="linkRow" class="mt-7 flex flex-wrap gap-3 text-sm"></div>
 
         <div class="mt-8 flex gap-3 flex-wrap">
-          <a href="#music" class="px-5 py-3 rounded-2xl bg-sky-600 text-white font-semibold">Listen now</a>
-          <a href="#about" class="px-5 py-3 rounded-2xl border border-blue-200 hover:border-blue-300">What is Bollytekk?</a>
+          <a href="#music" class="px-5 py-3 rounded-2xl bg-white text-black font-semibold">Listen now</a>
+          <a href="#about" class="px-5 py-3 rounded-2xl border border-neutral-700 hover:border-neutral-500">What is Bollytekk?</a>
         </div>
       </div>
 
       <!-- Player Card -->
       <div class="flex-1 w-full reveal">
-        <div class="card overflow-hidden border border-blue-100 bg-white p-4">
-          <div class="p-4 rounded-xl bg-white border border-blue-100 relative">
+        <div class="card overflow-hidden p-4">
+          <div class="p-4 rounded-xl border border-neutral-800 relative">
             <div class="flex items-center justify-between gap-4">
               <div>
-                <p class="text-xs uppercase text-sky-700/70">Now Playing</p>
+                <p class="text-xs uppercase subtle">Now Playing</p>
                 <h3 id="nowTitle" class="text-lg font-semibold">—</h3>
-                <p id="nowTime" class="text-xs text-neutral-500">0:00 / 0:00</p>
+                <p id="nowTime" class="text-xs subtle">0:00 / 0:00</p>
               </div>
               <div class="flex items-center gap-2">
-                <button id="prevBtn" class="px-3 py-2 rounded-xl border border-blue-200 hover:border-blue-300 text-sm" aria-label="Previous">
+                <button id="prevBtn" class="px-3 py-2 rounded-xl border border-neutral-800 hover:border-neutral-600 text-sm" aria-label="Previous">
                   <i data-lucide="skip-back"></i>
                 </button>
-                <button id="playPause" class="px-4 py-2 rounded-xl border border-blue-200 hover:border-blue-300" aria-label="Play/Pause">
+                <button id="playPause" class="px-4 py-2 rounded-xl border border-neutral-800 hover:border-neutral-600" aria-label="Play/Pause">
                   <i data-lucide="play"></i>
                 </button>
-                <button id="nextBtn" class="px-3 py-2 rounded-xl border border-blue-200 hover:border-blue-300 text-sm" aria-label="Next">
+                <button id="nextBtn" class="px-3 py-2 rounded-xl border border-neutral-800 hover:border-neutral-600 text-sm" aria-label="Next">
                   <i data-lucide="skip-forward"></i>
                 </button>
               </div>
             </div>
-            <input id="seek" type="range" min="0" max="100" value="0" class="mt-4 w-full accent-sky-600">
+            <input id="seek" type="range" min="0" max="100" value="0" class="mt-4 w-full accent-white">
             <audio id="player" preload="metadata"></audio>
 
             <!-- Autoplay overlay (for browsers that block) -->
-            <div id="playOverlay" class="absolute inset-0 bg-white/70 backdrop-blur-sm rounded-xl place-items-center show">
-              <div class="grid place-items-center h-full">
-                <button id="overlayPlay" class="px-5 py-3 rounded-2xl bg-sky-600 text-white font-semibold">
+            <div id="playOverlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm rounded-xl grid place-items-center show-block">
+              <div class="text-center">
+                <button id="overlayPlay" class="px-5 py-3 rounded-2xl bg-white text-black font-semibold">
                   Tap to Play
                 </button>
-                <p class="text-xs text-neutral-600 mt-2">Autoplay is muted by some browsers. Tap to start.</p>
+                <p class="text-xs muted mt-2">Autoplay is blocked on some browsers.</p>
               </div>
             </div>
           </div>
 
-          <ul id="queue" class="mt-4 divide-y divide-blue-100"></ul>
+          <ul id="queue" class="mt-4 divide-y divide-neutral-800"></ul>
         </div>
-        <p class="text-xs text-neutral-500 mt-2">Put your .mp3/.wav in <code>/assets/tracks/</code> and update the list below in the code.</p>
+        <p class="text-xs subtle mt-2">Put your .mp3/.wav in <code>/assets/tracks/</code> and update the list below in the code.</p>
       </div>
     </div>
 
     <!-- EDIT: HERO IMAGE HERE -->
-    <div class="absolute inset-0 -z-10 pointer-events-none opacity-[0.12]" id="heroParallax"
+    <div class="absolute inset-0 -z-10 pointer-events-none opacity-[0.16]" id="heroParallax"
          style="background-image:url('assets/img/cover.jpg'); background-size:cover; background-position:center;">
     </div>
   </section>
@@ -176,7 +175,7 @@
   <section id="music" class="max-w-6xl mx-auto px-4 py-14">
     <h2 class="text-2xl sm:text-3xl font-bold">Music</h2>
     <div class="accent-line mt-2 w-16"></div>
-    <p class="text-neutral-700 mt-2 max-w-2xl">Click a track card to load it into the player.</p>
+    <p class="subtle mt-2 max-w-2xl">Click a track card to load it into the player.</p>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6" id="tracksGrid"></div>
   </section>
 
@@ -184,7 +183,7 @@
   <section id="clips" class="max-w-6xl mx-auto px-4 py-14">
     <h2 class="text-2xl sm:text-3xl font-bold">Clips</h2>
     <div class="accent-line mt-2 w-16"></div>
-    <p class="text-neutral-700 mt-2 max-w-2xl">Short visuals, snippets, behind-the-scenes.</p>
+    <p class="subtle mt-2 max-w-2xl">Short visuals, snippets, behind-the-scenes.</p>
     <div class="grid md:grid-cols-2 gap-6 mt-6" id="clipsGrid"></div>
   </section>
 
@@ -196,13 +195,13 @@
       <!-- EDIT: HERO/ABOUT IMAGE -->
       <img alt="Bollytekk visual" src="assets/img/cover.jpg"
            onerror="this.src='https://picsum.photos/seed/bollytekk/900/600'"
-           class="rounded-2xl border border-blue-100 w-full md:col-span-1 reveal">
-      <div class="md:col-span-2 text-neutral-700 reveal">
+           class="rounded-2xl border border-neutral-800 w-full md:col-span-1 reveal">
+      <div class="md:col-span-2 reveal">
         <!-- EDIT: ABOUT / DESCRIPTION (same copy as hero) -->
-        <p>Bollytekk is a genre pioneered by Reesh, Roro, and Saif — a genre-bending fusion of traditional Indian sounds and modern hip-hop energy. Inspired by the deep rhythms of tablas, the shimmering melodies of sitars, and the cinematic sweep of Bollywood, Bollytekk blends them with hard-hitting trap drums, lush cloud-rap atmospheres, and intricate lyricism. It’s more than just music — it’s a bridge between cultures, honoring Indian heritage while pushing global sound forward. Every track is a celebration of beauty, identity, and rhythm, crafted to move both heart and head.</p>
+        <p class="muted">Bollytekk is a genre pioneered by Reesh, Roro, and Saif — a genre-bending fusion of traditional Indian sounds and modern hip-hop energy. Inspired by the deep rhythms of tablas, the shimmering melodies of sitars, and the cinematic sweep of Bollywood, Bollytekk blends them with hard-hitting trap drums, lush cloud-rap atmospheres, and intricate lyricism. It’s more than just music — it’s a bridge between cultures, honoring Indian heritage while pushing global sound forward. Every track is a celebration of beauty, identity, and rhythm, crafted to move both heart and head.</p>
         <div class="mt-4 flex gap-3">
-          <a class="px-4 py-2 rounded-xl border border-blue-200 hover:border-blue-300" href="#contact">Contact</a>
-          <a class="px-4 py-2 rounded-2xl bg-sky-600 text-white" href="#music">Play music</a>
+          <a class="px-4 py-2 rounded-xl border border-neutral-700 hover:border-neutral-500" href="#contact">Contact</a>
+          <a class="px-4 py-2 rounded-2xl bg-white text-black" href="#music">Play music</a>
         </div>
       </div>
     </div>
@@ -213,34 +212,21 @@
     <h2 class="text-2xl sm:text-3xl font-bold">Press Kit</h2>
     <div class="accent-line mt-2 w-16"></div>
     <div class="mt-4 grid md:grid-cols-2 gap-6 items-start">
-      <div class="card border border-blue-100 p-4 reveal">
+      <div class="card p-4 reveal hoverable">
         <h3 class="font-semibold">Downloads</h3>
-        <!-- EDIT: PRESS KIT FILES HERE
-             Put files in /assets/epk/ and update the filenames below:
-             /assets/epk/Bollytekk-EPK.pdf
-             /assets/epk/Press-Photos.zip
-             /assets/epk/Logos.zip
-             /assets/epk/Stage-Plot.pdf
-        -->
-        <ul class="list-disc list-inside text-neutral-700 mt-2">
+        <!-- EDIT: PRESS KIT FILES HERE -->
+        <ul class="list-disc list-inside muted mt-2">
           <li><a class="link-underline" href="assets/epk/Bollytekk-EPK.pdf">Bio + Highlights (PDF)</a></li>
           <li><a class="link-underline" href="assets/epk/Press-Photos.zip">Press photos (ZIP)</a></li>
           <li><a class="link-underline" href="assets/epk/Logos.zip">Logo/brand assets (PNG/SVG)</a></li>
           <li><a class="link-underline" href="assets/epk/Stage-Plot.pdf">Stage plot / tech rider</a></li>
         </ul>
-        <!-- TEMPLATE (example) —
-             EPK/
-               Bollytekk-EPK.pdf
-               Press-Photos.zip
-               Logos.zip
-               Stage-Plot.pdf
-        -->
-        <p class="text-sm text-neutral-500 mt-3">Drop files into <code>/assets/epk/</code> and update links if needed.</p>
+        <p class="text-sm subtle mt-3">Drop files into <code>/assets/epk/</code> and update links if needed.</p>
       </div>
 
-      <div class="card border border-blue-100 p-4 reveal">
+      <div class="card p-4 reveal hoverable">
         <h3 class="font-semibold">Highlights</h3>
-        <ul class="list-disc list-inside text-neutral-700 mt-2">
+        <ul class="list-disc list-inside muted mt-2">
           <li>Cross-cultural production blending tablas, sitars, and 808s.</li>
           <li>Live sets bridging underground rap and classical Indian motifs.</li>
           <li>Collaborations across scenes; global sound with local roots.</li>
@@ -254,59 +240,61 @@
     <h2 class="text-2xl sm:text-3xl font-bold">Contact</h2>
     <div class="accent-line mt-2 w-16"></div>
     <div class="mt-4 grid md:grid-cols-2 gap-6 items-start">
-      <form class="card border border-blue-100 p-4 reveal" onsubmit="return false;">
-        <label class="text-sm text-neutral-600">Name</label>
-        <input class="w-full mt-1 p-3 rounded-xl bg-white border border-blue-100" placeholder="Your name" />
-        <label class="text-sm text-neutral-600 mt-4">Email</label>
-        <input class="w-full mt-1 p-3 rounded-xl bg-white border border-blue-100" placeholder="you@example.com" type="email" />
-        <label class="text-sm text-neutral-600 mt-4">Message</label>
-        <textarea class="w-full mt-1 p-3 rounded-xl bg-white border border-blue-100" rows="5" placeholder="Booking / collab / press..."></textarea>
-        <a id="mailtoBtn" href="#" class="mt-4 inline-block px-5 py-3 rounded-2xl bg-sky-600 text-white font-semibold">Send via Email</a>
-        <p class="text-xs text-neutral-500 mt-2">Replace the email in the CONFIG section to enable this.</p>
+      <form class="card p-4 reveal hoverable" onsubmit="return false;">
+        <label class="text-sm subtle">Name</label>
+        <input class="w-full mt-1 p-3 rounded-xl bg-[#0c0c0d] border border-neutral-800" placeholder="Your name" />
+        <label class="text-sm subtle mt-4">Email</label>
+        <input class="w-full mt-1 p-3 rounded-xl bg-[#0c0c0d] border border-neutral-800" placeholder="you@example.com" type="email" />
+        <label class="text-sm subtle mt-4">Message</label>
+        <textarea class="w-full mt-1 p-3 rounded-xl bg-[#0c0c0d] border border-neutral-800" rows="5" placeholder="Booking / collab / press..."></textarea>
+        <a id="mailtoBtn" href="#" class="mt-4 inline-block px-5 py-3 rounded-2xl bg-white text-black font-semibold">Send via Email</a>
+        <p class="text-xs subtle mt-2">Replace the email in the CONFIG section to enable this.</p>
       </form>
 
-      <div class="card border border-blue-100 p-4 reveal">
+      <div class="card p-4 reveal hoverable">
         <h3 class="font-semibold">Find Us</h3>
-        <p class="text-neutral-700 mt-2">Follow for releases, visuals, and show dates.</p>
+        <p class="muted mt-2">Follow for releases, visuals, and show dates.</p>
         <div id="linkRow2" class="mt-4 flex flex-wrap gap-3 text-sm"></div>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="border-t border-blue-100/80 bg-white/60">
-    <div class="max-w-6xl mx-auto px-4 py-10 text-sm text-neutral-600">
+  <footer class="border-t border-neutral-800/80">
+    <div class="max-w-6xl mx-auto px-4 py-10 text-sm muted">
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <p>© <span id="year"></span> BOLLYTEKK. All rights reserved.</p>
-        <a href="#top" class="hover:text-sky-700">Back to top</a>
+        <a href="#top" class="hover:opacity-80">Back to top</a>
       </div>
     </div>
   </footer>
 
-  <!-- Persistent Mini Player -->
-  <div class="mini-player">
-    <div class="card border border-blue-100 bg-white px-3 py-2 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="cd cursor-pointer" id="openModal" title="Open player"></div>
-        <div class="min-w-0">
-          <p class="text-sm font-semibold truncate" id="miniTitle">—</p>
-          <p class="text-xs text-neutral-500" id="miniTime">0:00 / 0:00</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-2">
-        <button id="miniPrev" class="p-2 rounded-lg border border-blue-100 hover:border-blue-300" aria-label="Previous"><i data-lucide="skip-back"></i></button>
-        <button id="miniPlay" class="p-2 rounded-lg border border-blue-100 hover:border-blue-300" aria-label="Play/Pause"><i data-lucide="play"></i></button>
-        <button id="miniNext" class="p-2 rounded-lg border border-blue-100 hover:border-blue-300" aria-label="Next"><i data-lucide="skip-forward"></i></button>
-      </div>
-    </div>
-  </div>
+  <!-- Floating CD (replaces mini player bar) -->
+  <button id="floatingCD" class="floating-cd" title="Open player" aria-label="Open player">
+    <!-- SVG CD with circular BOLLYTEKK text -->
+    <svg class="disc" viewBox="0 0 100 100">
+      <defs>
+        <path id="circlePath" d="M50,50 m-35,0 a35,35 0 1,1 70,0 a35,35 0 1,1 -70,0" />
+      </defs>
+      <!-- outer ring -->
+      <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(148,163,184,.25)" stroke-width="2"/>
+      <!-- hole -->
+      <circle cx="50" cy="50" r="7" fill="#0b0f16" stroke="rgba(148,163,184,.3)" stroke-width="2"/>
+      <!-- circular text -->
+      <text font-size="7" fill="#e5e7eb" font-weight="700" letter-spacing="2">
+        <textPath href="#circlePath" startOffset="0%">
+          • BOLLYTEKK • BOLLYTEKK • BOLLYTEKK • BOLLYTEKK •
+        </textPath>
+      </text>
+    </svg>
+  </button>
 
   <!-- Fullscreen Player Modal -->
   <div class="modal" id="playerModal" aria-hidden="true">
     <div class="backdrop"></div>
     <div class="sheet">
-      <div class="card border border-blue-100 bg-white p-6 relative">
-        <button id="closeModal" class="absolute top-4 right-4 p-2 rounded-lg border border-blue-100 hover:border-blue-300" aria-label="Close">
+      <div class="card p-6 relative">
+        <button id="closeModal" class="absolute top-4 right-4 p-2 rounded-lg border border-neutral-800 hover:border-neutral-600" aria-label="Close">
           <i data-lucide="x"></i>
         </button>
         <div class="grid md:grid-cols-2 gap-6 items-center">
@@ -314,15 +302,15 @@
             <div class="big-cd"></div>
           </div>
           <div>
-            <p class="text-xs uppercase text-sky-700/70">Now Playing</p>
+            <p class="text-xs uppercase subtle">Now Playing</p>
             <h3 class="text-2xl font-extrabold" id="modalTitle">—</h3>
-            <p class="text-sm text-neutral-600" id="modalTime">0:00 / 0:00</p>
+            <p class="text-sm subtle" id="modalTime">0:00 / 0:00</p>
             <div class="mt-4 flex items-center gap-2">
-              <button class="p-3 rounded-xl border border-blue-200 hover:border-blue-300" id="modalPrev" aria-label="Previous"><i data-lucide="skip-back"></i></button>
-              <button class="p-3 rounded-xl border border-blue-200 hover:border-blue-300" id="modalPlay" aria-label="Play/Pause"><i data-lucide="play"></i></button>
-              <button class="p-3 rounded-xl border border-blue-200 hover:border-blue-300" id="modalNext" aria-label="Next"><i data-lucide="skip-forward"></i></button>
+              <button class="p-3 rounded-xl border border-neutral-800 hover:border-neutral-600" id="modalPrev" aria-label="Previous"><i data-lucide="skip-back"></i></button>
+              <button class="p-3 rounded-xl border border-neutral-800 hover:border-neutral-600" id="modalPlay" aria-label="Play/Pause"><i data-lucide="play"></i></button>
+              <button class="p-3 rounded-xl border border-neutral-800 hover:border-neutral-600" id="modalNext" aria-label="Next"><i data-lucide="skip-forward"></i></button>
             </div>
-            <input id="modalSeek" type="range" min="0" max="100" value="0" class="mt-4 w-full accent-sky-600">
+            <input id="modalSeek" type="range" min="0" max="100" value="0" class="mt-4 w-full accent-white">
           </div>
         </div>
       </div>
@@ -369,7 +357,7 @@
       links.forEach(l => {
         const a = document.createElement("a");
         a.href = l.url; a.target = "_blank"; a.rel = "noopener";
-        a.className = "px-4 py-2 rounded-2xl border border-blue-200 hover:border-blue-300 flex items-center gap-2";
+        a.className = "px-4 py-2 rounded-2xl border border-neutral-800 hover:border-neutral-600 flex items-center gap-2";
         a.setAttribute("aria-label", l.label);
         a.innerHTML = `<i data-lucide="${l.icon || 'link'}"></i><span>${l.label}</span>`;
         container.appendChild(a);
@@ -391,15 +379,9 @@
     const overlay = document.getElementById('playOverlay');
     const overlayPlay = document.getElementById('overlayPlay');
 
-    // Mini + Modal controls
-    const miniTitle = document.getElementById('miniTitle');
-    const miniTime = document.getElementById('miniTime');
-    const miniPrev = document.getElementById('miniPrev');
-    const miniPlay = document.getElementById('miniPlay');
-    const miniNext = document.getElementById('miniNext');
-
+    // Floating CD + Modal controls
+    const floatingCD = document.getElementById('floatingCD');
     const modal = document.getElementById('playerModal');
-    const openModal = document.getElementById('openModal');
     const closeModal = document.getElementById('closeModal');
     const modalTitle = document.getElementById('modalTitle');
     const modalTime = document.getElementById('modalTime');
@@ -417,12 +399,10 @@
       const t = tracks[i];
       player.src = t.src;
       nowTitle.textContent = t.title;
-      miniTitle.textContent = t.title;
       modalTitle.textContent = t.title;
       player.addEventListener('loadedmetadata', ()=>{
         const total = formatTime(player.duration);
         nowTime.textContent = `0:00 / ${total}`;
-        miniTime.textContent = `0:00 / ${total}`;
         modalTime.textContent = `0:00 / ${total}`;
         seek.value = 0; modalSeek.value = 0;
       }, { once: true });
@@ -439,9 +419,9 @@
       queue.innerHTML = '';
       tracks.forEach((t, i) => {
         const li = document.createElement('li');
-        li.className = 'flex items-center justify-between p-3 hover:bg-blue-50 rounded-xl cursor-pointer';
-        li.innerHTML = `<div><p class="font-medium">${t.title}</p><p class="text-xs text-neutral-500">${t.tag||""}</p></div><span class="text-xs text-neutral-400"></span>`;
-        li.onclick = () => { loadTrack(i); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); };
+        li.className = 'flex items-center justify-between p-3 hover:bg-white/5 rounded-xl cursor-pointer';
+        li.innerHTML = `<div><p class="font-medium">${t.title}</p><p class="text-xs subtle">${t.tag||""}</p></div><span class="text-xs subtle"></span>`;
+        li.onclick = () => { loadTrack(i); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); setCDPlaying(true); };
         queue.appendChild(li);
       });
       highlightQueue();
@@ -452,16 +432,15 @@
       grid.innerHTML = '';
       tracks.forEach((t, i) => {
         const card = document.createElement('div');
-        card.className = 'card border border-blue-100 p-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sky-100/40 transition cursor-pointer bg-white reveal';
-        card.innerHTML = `<h4 class="font-semibold">${t.title}</h4><p class="text-sm text-neutral-500">${t.tag||""}</p>
-                          <button class="mt-3 px-4 py-2 rounded-xl border border-blue-200 hover:border-blue-300 flex items-center gap-2">
+        card.className = 'card hoverable p-4 transition cursor-pointer reveal';
+        card.innerHTML = `<h4 class="font-semibold">${t.title}</h4><p class="text-sm subtle">${t.tag||""}</p>
+                          <button class="mt-3 px-4 py-2 rounded-xl border border-neutral-800 hover:border-neutral-600 flex items-center gap-2">
                             <i data-lucide="play"></i><span>Play</span>
                           </button>`;
-        card.querySelector('button').onclick = () => { loadTrack(i); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); lucide.createIcons(); };
+        card.querySelector('button').onclick = () => { loadTrack(i); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); setCDPlaying(true); lucide.createIcons(); };
         grid.appendChild(card);
       });
       lucide.createIcons();
-      // reveal after DOM insert
       setTimeout(() => document.querySelectorAll('.reveal').forEach(el => el.classList.add('in')), 0);
     }
 
@@ -470,58 +449,63 @@
       grid.innerHTML = '';
       clips.forEach(c => {
         const wrap = document.createElement('div');
-        wrap.className = 'card border border-blue-100 p-3 bg-white reveal';
+        wrap.className = 'card hoverable p-3 reveal';
         wrap.innerHTML = `
-          <video class="w-full rounded-xl border border-blue-100" controls preload="metadata" playsinline>
+          <video class="w-full rounded-xl border border-neutral-800" controls preload="metadata" playsinline>
             <source src="${c.src}" type="video/mp4">
           </video>
           <div class="mt-2 flex items-center justify-between">
             <p class="font-medium">${c.title}</p>
-            <p class="text-xs text-neutral-500">${c.caption||""}</p>
+            <p class="text-xs subtle">${c.caption||""}</p>
           </div>
         `;
         grid.appendChild(wrap);
       });
     }
 
-    function hideOverlay(){ overlay.classList.remove('show'); overlay.style.display = 'none'; }
+    function hideOverlay(){ overlay.classList.remove('show-block'); overlay.style.display = 'none'; }
 
     function setPlayIcons(isPlaying){
-      // big card
       playPause.innerHTML = `<i data-lucide="${isPlaying ? 'pause' : 'play'}"></i>`;
-      // mini
-      miniPlay.innerHTML = `<i data-lucide="${isPlaying ? 'pause' : 'play'}"></i>`;
-      // modal
       modalPlay.innerHTML = `<i data-lucide="${isPlaying ? 'pause' : 'play'}"></i>`;
       lucide.createIcons();
     }
+    function setCDPlaying(isPlaying){
+      if (isPlaying) floatingCD.classList.add('playing'); else floatingCD.classList.remove('playing');
+    }
 
     // unified controls
-    function prevTrack(){ const prev = (currentIndex - 1 + tracks.length) % tracks.length; loadTrack(prev); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); }
-    function nextTrack(){ const next = (currentIndex + 1) % tracks.length; loadTrack(next); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); }
-    function togglePlay(){ if(player.paused){ player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); } else { player.pause(); setPlayIcons(false); } }
+    function prevTrack(){ const prev = (currentIndex - 1 + tracks.length) % tracks.length; loadTrack(prev); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); setCDPlaying(true); }
+    function nextTrack(){ const next = (currentIndex + 1) % tracks.length; loadTrack(next); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); setCDPlaying(true); }
+    function togglePlay(){ if(player.paused){ player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); setCDPlaying(true); } else { player.pause(); setPlayIcons(false); setCDPlaying(false); } }
 
     // Button events
     playPause.addEventListener('click', togglePlay);
     prevBtn.addEventListener('click', prevTrack);
     nextBtn.addEventListener('click', nextTrack);
 
-    miniPlay.addEventListener('click', togglePlay);
-    miniPrev.addEventListener('click', prevTrack);
-    miniNext.addEventListener('click', nextTrack);
-
     modalPlay.addEventListener('click', togglePlay);
     modalPrev.addEventListener('click', prevTrack);
     modalNext.addEventListener('click', nextTrack);
 
+    // Floating CD opens modal
+    floatingCD.addEventListener('click', () => {
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden','false');
+    });
+    closeModal.addEventListener('click', () => {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden','true');
+    });
+
     // Time updates
-    player.addEventListener('play', ()=>{ setPlayIcons(true); highlightQueue(); });
-    player.addEventListener('pause', ()=>{ setPlayIcons(false); });
+    player.addEventListener('play', ()=>{ setPlayIcons(true); setCDPlaying(true); highlightQueue(); });
+    player.addEventListener('pause', ()=>{ setPlayIcons(false); setCDPlaying(false); });
 
     player.addEventListener('timeupdate', ()=>{
       if (!isNaN(player.duration)) {
         const t = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
-        nowTime.textContent = t; miniTime.textContent = t; modalTime.textContent = t;
+        nowTime.textContent = t; modalTime.textContent = t;
         const pct = (player.currentTime / player.duration) * 100;
         seek.value = pct; modalSeek.value = pct;
       }
@@ -533,20 +517,16 @@
     modalSeek.addEventListener('input', ()=> setCurrentFromPct(modalSeek.value));
 
     // Autoplay
-    overlayPlay.addEventListener('click', ()=>{ player.play().then(hideOverlay).catch(()=>{}); setPlayIcons(true); });
+    overlayPlay.addEventListener('click', ()=>{ player.play().then(hideOverlay).catch(()=>{}); setPlayIcons(true); setCDPlaying(true); });
     function tryAutoplay(){
       player.muted = false; // set true for guaranteed autoplay muted
       player.play().then(hideOverlay).catch(()=>{
-        overlay.classList.add('show');
+        overlay.classList.add('show-block');
         overlay.style.display = 'block';
       });
     }
 
-    // Mini -> Modal
-    openModal.addEventListener('click', () => { modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); });
-    closeModal.addEventListener('click', () => { modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); });
-
-    // Parallax hero (very light)
+    // Parallax hero (light)
     const heroParallax = document.getElementById('heroParallax');
     window.addEventListener('scroll', () => {
       const y = window.scrollY * 0.2;
@@ -569,27 +549,13 @@
   </script>
 
   <!--
-    ===== README mini =====
-    Color scheme: light blue + white.
-    1) Change hero/cover image:
-       - Replace file at: assets/img/cover.jpg
-       - Or change the path in:
-         a) The HERO parallax bg  -> search: "HERO IMAGE HERE"
-         b) The About <img> tag   -> search: "ABOUT IMAGE"
-    2) Edit the site description:
-       - Two places marked as: <--- EDIT: ABOUT / DESCRIPTION -->
-       <!--
-    3) Add songs/clips:
-       - In the CONFIG section (JS), update `tracks` (assets/tracks/*.mp3|*.wav) and `clips` (assets/clips/*.mp4).
-    4) Press Kit files:
-       - Put files in /assets/epk/ and update links in the "Press Kit" section (marked "PRESS KIT FILES HERE").
-    5) Player controls:
-       - Persistent mini player at bottom with spinning CD; click the CD to open full-screen modal player.
-    6) Free deploy:
-       - Push this file + assets to a public GitHub repo.
-       - Repo Settings → Pages → Branch: main, Folder: /(root). Wait ~1 minute.
-    7) Update later:
-       - In VS Code: git add . && git commit -m "update" && git push
-   !-->
+    ===== README mini (what changed) =====
+    • Color scheme: dark gradient background, white/gray text.
+    • Floating CD: bottom-right, replaces mini player bar. Spins when playing. Click to open modal with blur.
+    • Hover glow: cards now glow with a light-blue gradient effect and lift slightly.
+    • Smooth scroll + reveal animations intact.
+    • Edit hero image at: assets/img/cover.jpg (two places: HERO + ABOUT).
+    • Tracks/clips/links in CONFIG at top of <script>.
+  -->
 </body>
 </html>
