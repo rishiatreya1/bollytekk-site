@@ -9,41 +9,95 @@
   <!-- Tailwind (CDN, no build step) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- Icons (Lucide) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Manrope:wght@300;500;700&display=swap" rel="stylesheet"/>
 
   <style>
-    :root { color-scheme: dark; }
+    :root { color-scheme: light; }
     body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
-    .glass { backdrop-filter: blur(10px); background: rgba(255,255,255,.05); }
-    .card { border-radius: 1rem; box-shadow: 0 10px 24px rgba(0,0,0,.25); }
-    /* Subtle Indian motif using gradients */
+    .glass { backdrop-filter: blur(10px); background: rgba(255,255,255,.6); }
+    .card { border-radius: 1rem; box-shadow: 0 10px 24px rgba(0,0,0,.07); }
+    /* Light Indian motif using gradients (sky blues + off-white) */
     .bg-motif {
       background:
-        radial-gradient(900px 500px at 20% -10%, rgba(255,153,0,.16), transparent 60%),
-        radial-gradient(700px 400px at 120% 10%, rgba(0,180,255,.12), transparent 60%),
-        radial-gradient(1000px 600px at 50% 120%, rgba(190,0,255,.10), transparent 60%),
-        linear-gradient(180deg, #0b0b0b, #0a0a0a 40%, #0b0b0b);
+        radial-gradient(900px 500px at 15% -10%, rgba(99, 179, 237, .18), transparent 60%),
+        radial-gradient(700px 400px at 110% 0%, rgba(191, 219, 254, .25), transparent 60%),
+        linear-gradient(180deg, #ffffff, #f8fbff 40%, #ffffff);
     }
     .link-underline { text-decoration: underline; text-underline-offset: 3px; }
-    .motif-border { border-image: linear-gradient(90deg, #ff9900, #ff2e63, #00c2ff) 1; border-width: 1px; border-style: solid; }
-    /* Play overlay */
+    .accent-line { background: linear-gradient(90deg, #60a5fa, #93c5fd); height: 2px; border-radius: 999px; }
+
+    /* Spinning CD */
+    .cd {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%, #fff 0 18%, #cfe8ff 19% 46%, #9bd0ff 47% 60%, #eaf5ff 61% 100%);
+      box-shadow: inset 0 0 0 2px #e5f0ff, inset 0 0 0 8px #ffffff;
+      position: relative; flex-shrink: 0;
+      animation: spin 6s linear infinite;
+    }
+    .cd::after {
+      content: "Bollytekk";
+      position: absolute; inset: 0;
+      font-size: 8px; color: #0a2540; display: grid; place-items: center;
+      letter-spacing: .5px; text-transform: uppercase; font-weight: 700;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Mini player bar */
+    .mini-player {
+      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+      width: min(960px, 92vw); z-index: 60;
+    }
+
+    /* Fullscreen player modal */
+    .modal {
+      position: fixed; inset: 0; display: none; z-index: 70;
+    }
+    .modal.show { display: grid; }
+    .modal .backdrop { position: absolute; inset: 0; backdrop-filter: blur(14px); background: rgba(255,255,255,.65); }
+    .modal .sheet { position: relative; margin: auto; width: min(920px, 94vw); }
+    .big-cd {
+      width: 220px; height: 220px; border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%, #fff 0 18%, #cfe8ff 19% 46%, #9bd0ff 47% 60%, #eaf5ff 61% 100%);
+      box-shadow: inset 0 0 0 4px #e5f0ff, inset 0 0 0 22px #ffffff, 0 10px 40px rgba(0,0,0,.08);
+      animation: spin 9s linear infinite;
+      position: relative;
+    }
+    .big-cd::after {
+      content: "BOLLYTEKK";
+      position: absolute; inset: 0;
+      font-size: 16px; color: #0a2540; display: grid; place-items: center;
+      letter-spacing: 2px; text-transform: uppercase; font-weight: 800;
+    }
+
+    /* Play overlay (for autoplay block) */
     #playOverlay { display: none; }
     .show { display:block; }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(12px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    /* Smooth scroll */
+    html { scroll-behavior: smooth; }
   </style>
 </head>
-<body class="bg-neutral-950 text-neutral-100 bg-motif">
+<body class="text-neutral-900 bg-motif">
 
   <!-- Header -->
-  <header class="sticky top-0 z-40 glass border-b border-neutral-800/60">
+  <header class="sticky top-0 z-40 glass border-b border-blue-100">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="#top" class="text-xl font-extrabold tracking-tight">BOLLYTEKK</a>
       <nav class="hidden sm:flex gap-6 text-sm">
         <a href="#music" class="hover:opacity-80">Music</a>
         <a href="#clips" class="hover:opacity-80">Clips</a>
         <a href="#about" class="hover:opacity-80">About</a>
+        <a href="#press" class="hover:opacity-80">Press Kit</a>
         <a href="#contact" class="hover:opacity-80">Contact</a>
       </nav>
     </div>
@@ -51,13 +105,15 @@
 
   <!-- Hero -->
   <section id="top" class="relative overflow-hidden">
-    <div class="max-w-6xl mx-auto px-4 py-16 sm:py-24 flex flex-col lg:flex-row gap-10 items-center">
-      <div class="flex-1">
+    <div class="max-w-6xl mx-auto px-4 py-14 sm:py-20 flex flex-col lg:flex-row gap-10 items-center">
+      <div class="flex-1 reveal">
         <h1 class="text-4xl sm:text-6xl font-extrabold leading-tight">
           Bollytekk
-          <span class="block text-neutral-400 text-2xl sm:text-3xl mt-2">by Reesh • with Roro & Saif</span>
+          <span class="block text-sky-700 text-2xl sm:text-3xl mt-2">by Reesh • with Roro & Saif</span>
         </h1>
-        <p class="mt-5 text-neutral-300 max-w-xl">
+
+        <!-- EDIT: ABOUT / DESCRIPTION -->
+        <p class="mt-5 text-neutral-700 max-w-xl">
           Bollytekk is a genre pioneered by Reesh, Roro, and Saif — a genre-bending fusion of traditional Indian sounds and modern hip-hop energy. Inspired by the deep rhythms of tablas, the shimmering melodies of sitars, and the cinematic sweep of Bollywood, Bollytekk blends them with hard-hitting trap drums, lush cloud-rap atmospheres, and intricate lyricism. It’s more than just music — it’s a bridge between cultures, honoring Indian heritage while pushing global sound forward. Every track is a celebration of beauty, identity, and rhythm, crafted to move both heart and head.
         </p>
 
@@ -65,73 +121,132 @@
         <div id="linkRow" class="mt-7 flex flex-wrap gap-3 text-sm"></div>
 
         <div class="mt-8 flex gap-3 flex-wrap">
-          <a href="#music" class="px-5 py-3 rounded-2xl bg-white text-black font-semibold">Listen now</a>
-          <a href="#about" class="px-5 py-3 rounded-2xl border border-neutral-700 hover:border-neutral-500">What is Bollytekk?</a>
+          <a href="#music" class="px-5 py-3 rounded-2xl bg-sky-600 text-white font-semibold">Listen now</a>
+          <a href="#about" class="px-5 py-3 rounded-2xl border border-blue-200 hover:border-blue-300">What is Bollytekk?</a>
         </div>
       </div>
 
       <!-- Player Card -->
-      <div class="flex-1 w-full">
-        <div class="card overflow-hidden border border-neutral-800 bg-gradient-to-br from-neutral-900 to-neutral-950 p-4">
-          <div class="p-4 rounded-xl bg-neutral-900/60 border border-neutral-800 relative">
+      <div class="flex-1 w-full reveal">
+        <div class="card overflow-hidden border border-blue-100 bg-white p-4">
+          <div class="p-4 rounded-xl bg-white border border-blue-100 relative">
             <div class="flex items-center justify-between gap-4">
               <div>
-                <p class="text-xs uppercase text-neutral-400">Now Playing</p>
+                <p class="text-xs uppercase text-sky-700/70">Now Playing</p>
                 <h3 id="nowTitle" class="text-lg font-semibold">—</h3>
-                <p id="nowTime" class="text-xs text-neutral-400">0:00 / 0:00</p>
+                <p id="nowTime" class="text-xs text-neutral-500">0:00 / 0:00</p>
               </div>
               <div class="flex items-center gap-2">
-                <button id="prevBtn" class="px-3 py-2 rounded-xl border border-neutral-700 hover:border-neutral-500 text-sm">Prev</button>
-                <button id="playPause" class="px-4 py-2 rounded-xl border border-neutral-700 hover:border-neutral-500">Play</button>
-                <button id="nextBtn" class="px-3 py-2 rounded-xl border border-neutral-700 hover:border-neutral-500 text-sm">Next</button>
+                <button id="prevBtn" class="px-3 py-2 rounded-xl border border-blue-200 hover:border-blue-300 text-sm" aria-label="Previous">
+                  <i data-lucide="skip-back"></i>
+                </button>
+                <button id="playPause" class="px-4 py-2 rounded-xl border border-blue-200 hover:border-blue-300" aria-label="Play/Pause">
+                  <i data-lucide="play"></i>
+                </button>
+                <button id="nextBtn" class="px-3 py-2 rounded-xl border border-blue-200 hover:border-blue-300 text-sm" aria-label="Next">
+                  <i data-lucide="skip-forward"></i>
+                </button>
               </div>
             </div>
-            <input id="seek" type="range" min="0" max="100" value="0" class="mt-4 w-full">
+            <input id="seek" type="range" min="0" max="100" value="0" class="mt-4 w-full accent-sky-600">
             <audio id="player" preload="metadata"></audio>
 
             <!-- Autoplay overlay (for browsers that block) -->
-            <div id="playOverlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-xl place-items-center show">
+            <div id="playOverlay" class="absolute inset-0 bg-white/70 backdrop-blur-sm rounded-xl place-items-center show">
               <div class="grid place-items-center h-full">
-                <button id="overlayPlay" class="px-5 py-3 rounded-2xl bg-white text-black font-semibold">
+                <button id="overlayPlay" class="px-5 py-3 rounded-2xl bg-sky-600 text-white font-semibold">
                   Tap to Play
                 </button>
-                <p class="text-xs text-neutral-300 mt-2">Autoplay is muted by some browsers. Tap to start.</p>
+                <p class="text-xs text-neutral-600 mt-2">Autoplay is muted by some browsers. Tap to start.</p>
               </div>
             </div>
           </div>
 
-          <ul id="queue" class="mt-4 divide-y divide-neutral-800"></ul>
+          <ul id="queue" class="mt-4 divide-y divide-blue-100"></ul>
         </div>
         <p class="text-xs text-neutral-500 mt-2">Put your .mp3/.wav in <code>/assets/tracks/</code> and update the list below in the code.</p>
       </div>
+    </div>
+
+    <!-- EDIT: HERO IMAGE HERE -->
+    <div class="absolute inset-0 -z-10 pointer-events-none opacity-[0.12]" id="heroParallax"
+         style="background-image:url('assets/img/cover.jpg'); background-size:cover; background-position:center;">
     </div>
   </section>
 
   <!-- Music Grid -->
   <section id="music" class="max-w-6xl mx-auto px-4 py-14">
     <h2 class="text-2xl sm:text-3xl font-bold">Music</h2>
-    <p class="text-neutral-300 mt-2 max-w-2xl">Click a track card to load it into the player.</p>
+    <div class="accent-line mt-2 w-16"></div>
+    <p class="text-neutral-700 mt-2 max-w-2xl">Click a track card to load it into the player.</p>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6" id="tracksGrid"></div>
   </section>
 
   <!-- Clips -->
   <section id="clips" class="max-w-6xl mx-auto px-4 py-14">
     <h2 class="text-2xl sm:text-3xl font-bold">Clips</h2>
-    <p class="text-neutral-300 mt-2 max-w-2xl">Short visuals, snippets, behind-the-scenes.</p>
+    <div class="accent-line mt-2 w-16"></div>
+    <p class="text-neutral-700 mt-2 max-w-2xl">Short visuals, snippets, behind-the-scenes.</p>
     <div class="grid md:grid-cols-2 gap-6 mt-6" id="clipsGrid"></div>
   </section>
 
   <!-- About -->
   <section id="about" class="max-w-6xl mx-auto px-4 py-14">
     <h2 class="text-2xl sm:text-3xl font-bold">About Bollytekk</h2>
+    <div class="accent-line mt-2 w-16"></div>
     <div class="mt-4 grid md:grid-cols-3 gap-6 items-start">
-      <img alt="Bollytekk visual" src="assets/img/cover.jpg" onerror="this.src='https://picsum.photos/seed/bollytekk/900/600'" class="rounded-2xl motif-border w-full md:col-span-1">
-      <div class="md:col-span-2 text-neutral-300">
+      <!-- EDIT: HERO/ABOUT IMAGE -->
+      <img alt="Bollytekk visual" src="assets/img/cover.jpg"
+           onerror="this.src='https://picsum.photos/seed/bollytekk/900/600'"
+           class="rounded-2xl border border-blue-100 w-full md:col-span-1 reveal">
+      <div class="md:col-span-2 text-neutral-700 reveal">
+        <!-- EDIT: ABOUT / DESCRIPTION (same copy as hero) -->
         <p>Bollytekk is a genre pioneered by Reesh, Roro, and Saif — a genre-bending fusion of traditional Indian sounds and modern hip-hop energy. Inspired by the deep rhythms of tablas, the shimmering melodies of sitars, and the cinematic sweep of Bollywood, Bollytekk blends them with hard-hitting trap drums, lush cloud-rap atmospheres, and intricate lyricism. It’s more than just music — it’s a bridge between cultures, honoring Indian heritage while pushing global sound forward. Every track is a celebration of beauty, identity, and rhythm, crafted to move both heart and head.</p>
         <div class="mt-4 flex gap-3">
-          <a class="px-4 py-2 rounded-xl border border-neutral-700 hover:border-neutral-500" href="#contact">Contact</a>
-          <a class="px-4 py-2 rounded-xl bg-white text-black" href="#music">Play music</a>
+          <a class="px-4 py-2 rounded-xl border border-blue-200 hover:border-blue-300" href="#contact">Contact</a>
+          <a class="px-4 py-2 rounded-2xl bg-sky-600 text-white" href="#music">Play music</a>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Press Kit -->
+  <section id="press" class="max-w-6xl mx-auto px-4 py-14">
+    <h2 class="text-2xl sm:text-3xl font-bold">Press Kit</h2>
+    <div class="accent-line mt-2 w-16"></div>
+    <div class="mt-4 grid md:grid-cols-2 gap-6 items-start">
+      <div class="card border border-blue-100 p-4 reveal">
+        <h3 class="font-semibold">Downloads</h3>
+        <!-- EDIT: PRESS KIT FILES HERE
+             Put files in /assets/epk/ and update the filenames below:
+             /assets/epk/Bollytekk-EPK.pdf
+             /assets/epk/Press-Photos.zip
+             /assets/epk/Logos.zip
+             /assets/epk/Stage-Plot.pdf
+        -->
+        <ul class="list-disc list-inside text-neutral-700 mt-2">
+          <li><a class="link-underline" href="assets/epk/Bollytekk-EPK.pdf">Bio + Highlights (PDF)</a></li>
+          <li><a class="link-underline" href="assets/epk/Press-Photos.zip">Press photos (ZIP)</a></li>
+          <li><a class="link-underline" href="assets/epk/Logos.zip">Logo/brand assets (PNG/SVG)</a></li>
+          <li><a class="link-underline" href="assets/epk/Stage-Plot.pdf">Stage plot / tech rider</a></li>
+        </ul>
+        <!-- TEMPLATE (example) —
+             EPK/
+               Bollytekk-EPK.pdf
+               Press-Photos.zip
+               Logos.zip
+               Stage-Plot.pdf
+        -->
+        <p class="text-sm text-neutral-500 mt-3">Drop files into <code>/assets/epk/</code> and update links if needed.</p>
+      </div>
+
+      <div class="card border border-blue-100 p-4 reveal">
+        <h3 class="font-semibold">Highlights</h3>
+        <ul class="list-disc list-inside text-neutral-700 mt-2">
+          <li>Cross-cultural production blending tablas, sitars, and 808s.</li>
+          <li>Live sets bridging underground rap and classical Indian motifs.</li>
+          <li>Collaborations across scenes; global sound with local roots.</li>
+        </ul>
       </div>
     </div>
   </section>
@@ -139,84 +254,132 @@
   <!-- Contact -->
   <section id="contact" class="max-w-6xl mx-auto px-4 py-14">
     <h2 class="text-2xl sm:text-3xl font-bold">Contact</h2>
+    <div class="accent-line mt-2 w-16"></div>
     <div class="mt-4 grid md:grid-cols-2 gap-6 items-start">
-      <form class="card border border-neutral-800 p-4" onsubmit="return false;">
-        <label class="text-sm text-neutral-400">Name</label>
-        <input class="w-full mt-1 p-3 rounded-xl bg-neutral-900 border border-neutral-800" placeholder="Your name" />
-        <label class="text-sm text-neutral-400 mt-4">Email</label>
-        <input class="w-full mt-1 p-3 rounded-xl bg-neutral-900 border border-neutral-800" placeholder="you@example.com" type="email" />
-        <label class="text-sm text-neutral-400 mt-4">Message</label>
-        <textarea class="w-full mt-1 p-3 rounded-xl bg-neutral-900 border border-neutral-800" rows="5" placeholder="Booking / collab / press..."></textarea>
-        <a id="mailtoBtn" href="#" class="mt-4 inline-block px-5 py-3 rounded-2xl bg-white text-black font-semibold">Send via Email</a>
+      <form class="card border border-blue-100 p-4 reveal" onsubmit="return false;">
+        <label class="text-sm text-neutral-600">Name</label>
+        <input class="w-full mt-1 p-3 rounded-xl bg-white border border-blue-100" placeholder="Your name" />
+        <label class="text-sm text-neutral-600 mt-4">Email</label>
+        <input class="w-full mt-1 p-3 rounded-xl bg-white border border-blue-100" placeholder="you@example.com" type="email" />
+        <label class="text-sm text-neutral-600 mt-4">Message</label>
+        <textarea class="w-full mt-1 p-3 rounded-xl bg-white border border-blue-100" rows="5" placeholder="Booking / collab / press..."></textarea>
+        <a id="mailtoBtn" href="#" class="mt-4 inline-block px-5 py-3 rounded-2xl bg-sky-600 text-white font-semibold">Send via Email</a>
         <p class="text-xs text-neutral-500 mt-2">Replace the email in the CONFIG section to enable this.</p>
       </form>
 
-      <div class="card border border-neutral-800 p-4">
-        <h3 class="font-semibold">Press Kit</h3>
-        <ul class="list-disc list-inside text-neutral-300 mt-2">
-          <li><a class="link-underline" href="assets/epk/Bollytekk-EPK.pdf">Bio + Highlights (PDF)</a></li>
-          <li><a class="link-underline" href="assets/epk/Press-Photos.zip">Press photos (ZIP)</a></li>
-          <li><a class="link-underline" href="assets/epk/Logos.zip">Logo/brand assets (PNG/SVG)</a></li>
-          <li><a class="link-underline" href="assets/epk/Stage-Plot.pdf">Stage plot / tech rider</a></li>
-        </ul>
-        <p class="text-sm text-neutral-400 mt-3">Drop files into <code>/assets/epk/</code> and update links if needed.</p>
+      <div class="card border border-blue-100 p-4 reveal">
+        <h3 class="font-semibold">Find Us</h3>
+        <p class="text-neutral-700 mt-2">Follow for releases, visuals, and show dates.</p>
+        <div id="linkRow2" class="mt-4 flex flex-wrap gap-3 text-sm"></div>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="border-t border-neutral-800/60">
-    <div class="max-w-6xl mx-auto px-4 py-10 text-sm text-neutral-400">
+  <footer class="border-t border-blue-100/80 bg-white/60">
+    <div class="max-w-6xl mx-auto px-4 py-10 text-sm text-neutral-600">
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <p>© <span id="year"></span> BOLLYTEKK. All rights reserved.</p>
-        <a href="#top" class="hover:text-white">Back to top</a>
+        <a href="#top" class="hover:text-sky-700">Back to top</a>
       </div>
     </div>
   </footer>
+
+  <!-- Persistent Mini Player -->
+  <div class="mini-player">
+    <div class="card border border-blue-100 bg-white px-3 py-2 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="cd cursor-pointer" id="openModal" title="Open player"></div>
+        <div class="min-w-0">
+          <p class="text-sm font-semibold truncate" id="miniTitle">—</p>
+          <p class="text-xs text-neutral-500" id="miniTime">0:00 / 0:00</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="miniPrev" class="p-2 rounded-lg border border-blue-100 hover:border-blue-300" aria-label="Previous"><i data-lucide="skip-back"></i></button>
+        <button id="miniPlay" class="p-2 rounded-lg border border-blue-100 hover:border-blue-300" aria-label="Play/Pause"><i data-lucide="play"></i></button>
+        <button id="miniNext" class="p-2 rounded-lg border border-blue-100 hover:border-blue-300" aria-label="Next"><i data-lucide="skip-forward"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fullscreen Player Modal -->
+  <div class="modal" id="playerModal" aria-hidden="true">
+    <div class="backdrop"></div>
+    <div class="sheet">
+      <div class="card border border-blue-100 bg-white p-6 relative">
+        <button id="closeModal" class="absolute top-4 right-4 p-2 rounded-lg border border-blue-100 hover:border-blue-300" aria-label="Close">
+          <i data-lucide="x"></i>
+        </button>
+        <div class="grid md:grid-cols-2 gap-6 items-center">
+          <div class="grid place-items-center">
+            <div class="big-cd"></div>
+          </div>
+          <div>
+            <p class="text-xs uppercase text-sky-700/70">Now Playing</p>
+            <h3 class="text-2xl font-extrabold" id="modalTitle">—</h3>
+            <p class="text-sm text-neutral-600" id="modalTime">0:00 / 0:00</p>
+            <div class="mt-4 flex items-center gap-2">
+              <button class="p-3 rounded-xl border border-blue-200 hover:border-blue-300" id="modalPrev" aria-label="Previous"><i data-lucide="skip-back"></i></button>
+              <button class="p-3 rounded-xl border border-blue-200 hover:border-blue-300" id="modalPlay" aria-label="Play/Pause"><i data-lucide="play"></i></button>
+              <button class="p-3 rounded-xl border border-blue-200 hover:border-blue-300" id="modalNext" aria-label="Next"><i data-lucide="skip-forward"></i></button>
+            </div>
+            <input id="modalSeek" type="range" min="0" max="100" value="0" class="mt-4 w-full accent-sky-600">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     // ===== CONFIG — EDIT THIS STUFF =====
     const email = "bollytekk@gmail.com"; // change this to your real inbox
 
     const links = [
-      { label: "Spotify", url: "https://open.spotify.com/artist/76YYGXw1BKIU86sab1B8Fo" },
-      { label: "SoundCloud", url: "https://soundcloud.com/onlyreesh" },
-      { label: "Apple Music", url: "https://music.apple.com/us/artist/reesh/1625510244" },
-      { label: "YouTube", url: "https://www.youtube.com/@onlyreesh" },
-      { label: "Instagram", url: "https://www.instagram.com/onlyreesh" }
+      { label: "Spotify", url: "https://open.spotify.com/artist/76YYGXw1BKIU86sab1B8Fo", icon: "spotify" },
+      { label: "SoundCloud", url: "https://soundcloud.com/onlyreesh", icon: "soundcloud" },
+      { label: "Apple Music", url: "https://music.apple.com/us/artist/reesh/1625510244", icon: "music" },
+      { label: "YouTube", url: "https://www.youtube.com/@onlyreesh", icon: "youtube" },
+      { label: "Instagram", url: "https://www.instagram.com/onlyreesh", icon: "instagram" }
     ];
 
-    // Put your real filenames in src, e.g. assets/tracks/midnight-in-mumbai.mp3
+    // EDIT: TRACKS ARRAY — put real filenames in src (assets/tracks/...)
     const tracks = [
       { title: "bombay luv", src: "assets/tracks/bombay_luv.wav", tag: "Single" },
       { title: "luv_amma", src: "assets/tracks/luv_amma.wav", tag: "Single" },
       { title: "namam", src: "assets/tracks/namam.wav", tag: "Single" },
       { title: "Yagna", src: "assets/tracks/Yagna.wav", tag: "Single" }
-      //{ title: "Sitar & 808s", src: "assets/tracks/sitar-808s.mp3", tag: "EP" }
     ];
 
-    // Short MP4s look best around 10–30s
+    // Optional clip grid (assets/clips/*.mp4)
     const clips = [
-      //{ title: "Studio Teaser", src: "assets/clips/studio-teaser.mp4", caption: "BTS" },
       { title: "Namam Music Vid", src: "assets/clips/namam_music_vid.mp4", caption: "Live" }
     ];
     // ===== END CONFIG =====
 
+    // icons
+    document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); });
+
     // Email button
     const mailtoBtn = document.getElementById("mailtoBtn");
-    mailtoBtn.href = `mailto:${email}?subject=Bollytekk%20Booking&body=Hi%20Bollytekk,%0D%0A%0D%0A`;
+    if (mailtoBtn) mailtoBtn.href = `mailto:${email}?subject=Bollytekk%20Booking&body=Hi%20Bollytekk,%0D%0A%0D%0A`;
 
-    // Links
-    const linkRow = document.getElementById("linkRow");
-    links.forEach(l => {
-      const a = document.createElement("a");
-      a.href = l.url;
-      a.target = "_blank";
-      a.rel = "noopener";
-      a.className = "px-4 py-2 rounded-2xl border border-neutral-700 hover:border-neutral-500";
-      a.textContent = l.label;
-      linkRow.appendChild(a);
-    });
+    // Links rows
+    function renderLinks(rowId) {
+      const container = document.getElementById(rowId);
+      if (!container) return;
+      links.forEach(l => {
+        const a = document.createElement("a");
+        a.href = l.url; a.target = "_blank"; a.rel = "noopener";
+        a.className = "px-4 py-2 rounded-2xl border border-blue-200 hover:border-blue-300 flex items-center gap-2";
+        a.setAttribute("aria-label", l.label);
+        a.innerHTML = `<i data-lucide="${l.icon || 'link'}"></i><span>${l.label}</span>`;
+        container.appendChild(a);
+      });
+      lucide.createIcons();
+    }
+    renderLinks("linkRow");
+    renderLinks("linkRow2");
 
     // Player logic
     const player = document.getElementById('player');
@@ -230,6 +393,23 @@
     const overlay = document.getElementById('playOverlay');
     const overlayPlay = document.getElementById('overlayPlay');
 
+    // Mini + Modal controls
+    const miniTitle = document.getElementById('miniTitle');
+    const miniTime = document.getElementById('miniTime');
+    const miniPrev = document.getElementById('miniPrev');
+    const miniPlay = document.getElementById('miniPlay');
+    const miniNext = document.getElementById('miniNext');
+
+    const modal = document.getElementById('playerModal');
+    const openModal = document.getElementById('openModal');
+    const closeModal = document.getElementById('closeModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalTime = document.getElementById('modalTime');
+    const modalPrev = document.getElementById('modalPrev');
+    const modalPlay = document.getElementById('modalPlay');
+    const modalNext = document.getElementById('modalNext');
+    const modalSeek = document.getElementById('modalSeek');
+
     let currentIndex = 0;
 
     function formatTime(sec){ sec = Math.floor(sec||0); const m = Math.floor(sec/60), s = String(sec%60).padStart(2,'0'); return `${m}:${s}`; }
@@ -239,9 +419,14 @@
       const t = tracks[i];
       player.src = t.src;
       nowTitle.textContent = t.title;
+      miniTitle.textContent = t.title;
+      modalTitle.textContent = t.title;
       player.addEventListener('loadedmetadata', ()=>{
-        nowTime.textContent = `0:00 / ${formatTime(player.duration)}`;
-        seek.value = 0;
+        const total = formatTime(player.duration);
+        nowTime.textContent = `0:00 / ${total}`;
+        miniTime.textContent = `0:00 / ${total}`;
+        modalTime.textContent = `0:00 / ${total}`;
+        seek.value = 0; modalSeek.value = 0;
       }, { once: true });
       highlightQueue();
     }
@@ -256,9 +441,9 @@
       queue.innerHTML = '';
       tracks.forEach((t, i) => {
         const li = document.createElement('li');
-        li.className = 'flex items-center justify-between p-3 hover:bg-neutral-900/60 rounded-xl cursor-pointer';
-        li.innerHTML = `<div><p class="font-medium">${t.title}</p><p class="text-xs text-neutral-400">${t.tag||""}</p></div><span class="text-xs text-neutral-500"></span>`;
-        li.onclick = () => { loadTrack(i); player.play().catch(()=>{}); hideOverlay(); };
+        li.className = 'flex items-center justify-between p-3 hover:bg-blue-50 rounded-xl cursor-pointer';
+        li.innerHTML = `<div><p class="font-medium">${t.title}</p><p class="text-xs text-neutral-500">${t.tag||""}</p></div><span class="text-xs text-neutral-400"></span>`;
+        li.onclick = () => { loadTrack(i); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); };
         queue.appendChild(li);
       });
       highlightQueue();
@@ -269,11 +454,17 @@
       grid.innerHTML = '';
       tracks.forEach((t, i) => {
         const card = document.createElement('div');
-        card.className = 'card border border-neutral-800 p-4 hover:border-neutral-600 transition cursor-pointer';
-        card.innerHTML = `<h4 class="font-semibold">${t.title}</h4><p class="text-sm text-neutral-400">${t.tag||""}</p><button class="mt-3 px-4 py-2 rounded-xl border border-neutral-700 hover:border-neutral-500">Play</button>`;
-        card.querySelector('button').onclick = () => { loadTrack(i); player.play().catch(()=>{}); hideOverlay(); };
+        card.className = 'card border border-blue-100 p-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sky-100/40 transition cursor-pointer bg-white reveal';
+        card.innerHTML = `<h4 class="font-semibold">${t.title}</h4><p class="text-sm text-neutral-500">${t.tag||""}</p>
+                          <button class="mt-3 px-4 py-2 rounded-xl border border-blue-200 hover:border-blue-300 flex items-center gap-2">
+                            <i data-lucide="play"></i><span>Play</span>
+                          </button>`;
+        card.querySelector('button').onclick = () => { loadTrack(i); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); lucide.createIcons(); };
         grid.appendChild(card);
       });
+      lucide.createIcons();
+      // reveal after DOM insert
+      setTimeout(() => document.querySelectorAll('.reveal').forEach(el => el.classList.add('in')), 0);
     }
 
     function renderClips(){
@@ -281,14 +472,14 @@
       grid.innerHTML = '';
       clips.forEach(c => {
         const wrap = document.createElement('div');
-        wrap.className = 'card border border-neutral-800 p-3';
+        wrap.className = 'card border border-blue-100 p-3 bg-white reveal';
         wrap.innerHTML = `
-          <video class="w-full rounded-xl border border-neutral-800" controls preload="metadata" playsinline>
+          <video class="w-full rounded-xl border border-blue-100" controls preload="metadata" playsinline>
             <source src="${c.src}" type="video/mp4">
           </video>
           <div class="mt-2 flex items-center justify-between">
             <p class="font-medium">${c.title}</p>
-            <p class="text-xs text-neutral-400">${c.caption||""}</p>
+            <p class="text-xs text-neutral-500">${c.caption||""}</p>
           </div>
         `;
         grid.appendChild(wrap);
@@ -297,51 +488,78 @@
 
     function hideOverlay(){ overlay.classList.remove('show'); overlay.style.display = 'none'; }
 
-    playPause.addEventListener('click', () => {
-      if(player.paused){ player.play().catch(()=>{}); hideOverlay(); } else { player.pause(); }
-    });
-    prevBtn.addEventListener('click', () => {
-      const prev = (currentIndex - 1 + tracks.length) % tracks.length;
-      loadTrack(prev); player.play().catch(()=>{}); hideOverlay();
-    });
-    nextBtn.addEventListener('click', () => {
-      const next = (currentIndex + 1) % tracks.length;
-      loadTrack(next); player.play().catch(()=>{}); hideOverlay();
-    });
+    function setPlayIcons(isPlaying){
+      // big card
+      playPause.innerHTML = `<i data-lucide="${isPlaying ? 'pause' : 'play'}"></i>`;
+      // mini
+      miniPlay.innerHTML = `<i data-lucide="${isPlaying ? 'pause' : 'play'}"></i>`;
+      // modal
+      modalPlay.innerHTML = `<i data-lucide="${isPlaying ? 'pause' : 'play'}"></i>`;
+      lucide.createIcons();
+    }
 
-    player.addEventListener('play', ()=>{ playPause.textContent = 'Pause'; highlightQueue(); });
-    player.addEventListener('pause', ()=>{ playPause.textContent = 'Play'; });
+    // unified controls
+    function prevTrack(){ const prev = (currentIndex - 1 + tracks.length) % tracks.length; loadTrack(prev); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); }
+    function nextTrack(){ const next = (currentIndex + 1) % tracks.length; loadTrack(next); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); }
+    function togglePlay(){ if(player.paused){ player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); } else { player.pause(); setPlayIcons(false); } }
+
+    // Button events
+    playPause.addEventListener('click', togglePlay);
+    prevBtn.addEventListener('click', prevTrack);
+    nextBtn.addEventListener('click', nextTrack);
+
+    miniPlay.addEventListener('click', togglePlay);
+    miniPrev.addEventListener('click', prevTrack);
+    miniNext.addEventListener('click', nextTrack);
+
+    modalPlay.addEventListener('click', togglePlay);
+    modalPrev.addEventListener('click', prevTrack);
+    modalNext.addEventListener('click', nextTrack);
+
+    // Time updates
+    player.addEventListener('play', ()=>{ setPlayIcons(true); highlightQueue(); });
+    player.addEventListener('pause', ()=>{ setPlayIcons(false); });
 
     player.addEventListener('timeupdate', ()=>{
       if (!isNaN(player.duration)) {
-        nowTime.textContent = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
-        seek.value = (player.currentTime / player.duration) * 100;
+        const t = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
+        nowTime.textContent = t; miniTime.textContent = t; modalTime.textContent = t;
+        const pct = (player.currentTime / player.duration) * 100;
+        seek.value = pct; modalSeek.value = pct;
       }
     });
 
-    seek.addEventListener('input', ()=>{
-      if (!isNaN(player.duration)) {
-        player.currentTime = (seek.value/100) * player.duration;
-      }
-    });
+    // Scrub
+    function setCurrentFromPct(pct){ if (!isNaN(player.duration)) player.currentTime = (pct/100) * player.duration; }
+    seek.addEventListener('input', ()=> setCurrentFromPct(seek.value));
+    modalSeek.addEventListener('input', ()=> setCurrentFromPct(modalSeek.value));
 
-    player.addEventListener('ended', ()=>{
-      const next = (currentIndex + 1) % tracks.length;
-      loadTrack(next); player.play().catch(()=>{}); hideOverlay();
-    });
-
-    overlayPlay.addEventListener('click', ()=>{
-      player.play().then(hideOverlay).catch(()=>{ /* still blocked */ });
-    });
-
-    // Try autoplay on load (may be blocked; overlay will show)
+    // Autoplay
+    overlayPlay.addEventListener('click', ()=>{ player.play().then(hideOverlay).catch(()=>{}); setPlayIcons(true); });
     function tryAutoplay(){
-      player.muted = false; // change to true if you want guaranteed autoplay muted; then unmute on click
+      player.muted = false; // set true for guaranteed autoplay muted
       player.play().then(hideOverlay).catch(()=>{
         overlay.classList.add('show');
         overlay.style.display = 'block';
       });
     }
+
+    // Mini -> Modal
+    openModal.addEventListener('click', () => { modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); });
+    closeModal.addEventListener('click', () => { modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); });
+
+    // Parallax hero (very light)
+    const heroParallax = document.getElementById('heroParallax');
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY * 0.2;
+      heroParallax.style.transform = `translateY(${y}px)`;
+    }, { passive: true });
+
+    // Reveal observer
+    const io = new IntersectionObserver((entries)=> {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
     // Init
     document.getElementById('year').textContent = new Date().getFullYear();
@@ -351,5 +569,29 @@
     renderClips();
     tryAutoplay();
   </script>
+
+  <!--
+    ===== README mini =====
+    Color scheme: light blue + white.
+    1) Change hero/cover image:
+       - Replace file at: assets/img/cover.jpg
+       - Or change the path in:
+         a) The HERO parallax bg  -> search: "HERO IMAGE HERE"
+         b) The About <img> tag   -> search: "ABOUT IMAGE"
+    2) Edit the site description:
+       - Two places marked as: <--- EDIT: ABOUT / DESCRIPTION -->
+       <!--
+    3) Add songs/clips:
+       - In the CONFIG section (JS), update `tracks` (assets/tracks/*.mp3|*.wav) and `clips` (assets/clips/*.mp4).
+    4) Press Kit files:
+       - Put files in /assets/epk/ and update links in the "Press Kit" section (marked "PRESS KIT FILES HERE").
+    5) Player controls:
+       - Persistent mini player at bottom with spinning CD; click the CD to open full-screen modal player.
+    6) Free deploy:
+       - Push this file + assets to a public GitHub repo.
+       - Repo Settings → Pages → Branch: main, Folder: /(root). Wait ~1 minute.
+    7) Update later:
+       - In VS Code: git add . && git commit -m "update" && git push
+   !-->
 </body>
 </html>
