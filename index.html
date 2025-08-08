@@ -6,7 +6,7 @@
   <title>Bollytekk — Reesh</title>
   <meta name="description" content="Bollytekk — a fusion of Indian sounds and modern hip-hop by Reesh, Roro, and Saif." />
 
-  <!-- Tailwind (CDN, no build step) -->
+  <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Icons (Lucide) -->
@@ -15,79 +15,77 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Manrope:wght@300;500;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet"/>
 
   <style>
     :root { color-scheme: dark; }
     body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
 
-    /* ===== THEME: dark bg + white text with a nice gradient ===== */
+    /* ===== Theme: PURE black + white ===== */
     .bg-motif {
-      /* layered dark gradients with a soft vignette */
       background:
-        radial-gradient(1200px 700px at 10% -10%, rgba(80,80,80,.12), transparent 60%),
-        radial-gradient(800px 500px at 110% 0%, rgba(80,80,80,.10), transparent 60%),
-        linear-gradient(180deg, #0a0a0a 0%, #0b0b0b 35%, #060606 100%);
+        radial-gradient(1200px 700px at 10% -10%, rgba(255,255,255,.07), transparent 60%),
+        radial-gradient(800px 500px at 110% 0%, rgba(255,255,255,.05), transparent 60%),
+        linear-gradient(180deg, #000 0%, #0a0a0a 35%, #000 100%);
     }
-    .glass { backdrop-filter: blur(10px); background: rgba(14,14,14,.6); }
-    .card { border-radius: 1rem; background: #0f0f10; border: 1px solid #1f2937; box-shadow: 0 10px 24px rgba(0,0,0,.35); }
-    .card.hoverable { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
-    .card.hoverable:hover {
-      transform: translateY(-2px);
-      border-color: rgba(96,165,250,.6); /* sky-400 */
-      box-shadow: 0 10px 30px rgba(56,189,248,.18), 0 0 0 1px rgba(125,211,252,.12) inset;
-    }
-    .accent-line { background: linear-gradient(90deg, #60a5fa, #93c5fd); height: 2px; border-radius: 999px; }
+    .glass { backdrop-filter: blur(10px); background: rgba(0,0,0,.6); }
+    .card  { border-radius: 1rem; background: #0b0b0b; border: 1px solid #1a1a1a; box-shadow: 0 10px 24px rgba(0,0,0,.35); }
+    .hoverable { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+    .hoverable:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(255,255,255,.08); border-color: #2a2a2a; }
+
+    /* Text / links */
+    body, p, h1, h2, h3, h4, a { color: #fff; }
+    .muted  { color: #cfcfcf; }
+    .subtle { color: #9a9a9a; }
     .link-underline { text-decoration: underline; text-underline-offset: 3px; }
 
-    /* Text colors */
-    body, p, h1, h2, h3, h4, a { color: #e5e7eb; }       /* neutral-200 */
-    .muted { color: #9ca3af; }                           /* neutral-400/500 */
-    .subtle { color: #6b7280; }                          /* neutral-500/600 */
+    /* Section underline */
+    .accent-line { background: linear-gradient(90deg, #fff, rgba(255,255,255,.6)); height: 2px; border-radius: 999px; }
 
     /* ===== Floating CD button (bottom-right) ===== */
     .floating-cd {
       position: fixed; right: 18px; bottom: 18px; z-index: 70;
       width: 64px; height: 64px; border-radius: 50%;
       display: grid; place-items: center;
-      background: radial-gradient(circle at 50% 45%, #1f2937 0 30%, #111827 31% 60%, #0b0f16 61% 100%);
-      box-shadow: 0 10px 30px rgba(0,0,0,.5), 0 0 0 1px rgba(148,163,184,.18) inset;
+      background: radial-gradient(circle at 50% 45%, #1a1a1a 0 30%, #111 31% 60%, #0a0a0a 61% 100%);
+      box-shadow: 0 10px 30px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.12) inset;
       cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, background .2s ease;
     }
-    .floating-cd:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 16px 38px rgba(0,0,0,.6); }
+    .floating-cd:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 16px 38px rgba(0,0,0,.7); }
     .floating-cd.playing .disc { animation: spin 6s linear infinite; }
 
-    /* The disc (SVG) */
     .disc { width: 48px; height: 48px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ===== Fullscreen Player Modal (dark blur) ===== */
+    /* ===== Fullscreen Player Modal ===== */
     .modal { position: fixed; inset: 0; display: none; z-index: 80; }
     .modal.show { display: grid; }
-    .modal .backdrop { position: absolute; inset: 0; backdrop-filter: blur(16px); background: rgba(8,8,8,.65); }
+    .modal .backdrop { position: absolute; inset: 0; backdrop-filter: blur(16px); background: rgba(0,0,0,.65); }
     .modal .sheet { position: relative; margin: auto; width: min(920px, 94vw); }
     .big-cd {
       width: 240px; height: 240px; border-radius: 50%;
-      background: radial-gradient(circle at 50% 45%, #1f2937 0 30%, #111827 31% 60%, #0b0f16 61% 100%);
-      box-shadow: inset 0 0 0 6px rgba(148,163,184,.12), 0 10px 40px rgba(0,0,0,.5);
-      position: relative;
-      animation: spin 9s linear infinite;
+      background: radial-gradient(circle at 50% 45%, #1a1a1a 0 30%, #111 31% 60%, #0a0a0a 61% 100%);
+      box-shadow: inset 0 0 0 6px rgba(255,255,255,.08), 0 10px 40px rgba(0,0,0,.65);
+      position: relative; animation: spin 9s linear infinite;
     }
 
-    /* Play overlay (for autoplay block) */
+    /* Autoplay overlay */
     #playOverlay { display: none; }
     .show-block { display: block; }
 
-    /* Reveal on scroll + smooth */
+    /* Reveal + smooth scroll */
     .reveal { opacity: 0; transform: translateY(12px); transition: opacity .6s ease, transform .6s ease; }
     .reveal.in { opacity: 1; transform: translateY(0); }
     html { scroll-behavior: smooth; }
+
+    /* Hover glow for cards (subtle white glow) */
+    .hover-glow:hover { box-shadow: 0 0 0 1px rgba(255,255,255,.25) inset, 0 16px 36px rgba(255,255,255,.08); }
   </style>
 </head>
 <body class="bg-motif">
 
   <!-- Header -->
-  <header class="sticky top-0 z-40 glass border-b border-neutral-800">
+  <header class="sticky top-0 z-40 glass border-b border-neutral-900">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="#top" class="text-xl font-extrabold tracking-tight">BOLLYTEKK</a>
       <nav class="hidden sm:flex gap-6 text-sm">
@@ -106,7 +104,7 @@
       <div class="flex-1 reveal">
         <h1 class="text-4xl sm:text-6xl font-extrabold leading-tight">
           Bollytekk
-          <span class="block muted text-2xl sm:text-3xl mt-2">Reesh • Roro • Saif</span>
+          <span class="block subtle text-2xl sm:text-3xl mt-2">Reesh • Roro • Saif</span>
         </h1>
 
         <!-- EDIT: ABOUT / DESCRIPTION -->
@@ -119,14 +117,14 @@
 
         <div class="mt-8 flex gap-3 flex-wrap">
           <a href="#music" class="px-5 py-3 rounded-2xl bg-white text-black font-semibold">Listen now</a>
-          <a href="#about" class="px-5 py-3 rounded-2xl border border-neutral-700 hover:border-neutral-500">What is Bollytekk?</a>
+          <a href="#about" class="px-5 py-3 rounded-2xl border border-neutral-800 hover:border-neutral-700">What is Bollytekk?</a>
         </div>
       </div>
 
       <!-- Player Card -->
       <div class="flex-1 w-full reveal">
-        <div class="card overflow-hidden p-4">
-          <div class="p-4 rounded-xl border border-neutral-800 relative">
+        <div class="card hover-glow overflow-hidden p-4">
+          <div class="p-4 rounded-xl border border-neutral-900 relative">
             <div class="flex items-center justify-between gap-4">
               <div>
                 <p class="text-xs uppercase subtle">Now Playing</p>
@@ -134,13 +132,13 @@
                 <p id="nowTime" class="text-xs subtle">0:00 / 0:00</p>
               </div>
               <div class="flex items-center gap-2">
-                <button id="prevBtn" class="px-3 py-2 rounded-xl border border-neutral-800 hover:border-neutral-600 text-sm" aria-label="Previous">
+                <button id="prevBtn" class="px-3 py-2 rounded-xl border border-neutral-900 hover:border-neutral-700 text-sm" aria-label="Previous">
                   <i data-lucide="skip-back"></i>
                 </button>
-                <button id="playPause" class="px-4 py-2 rounded-xl border border-neutral-800 hover:border-neutral-600" aria-label="Play/Pause">
+                <button id="playPause" class="px-4 py-2 rounded-xl border border-neutral-900 hover:border-neutral-700" aria-label="Play/Pause">
                   <i data-lucide="play"></i>
                 </button>
-                <button id="nextBtn" class="px-3 py-2 rounded-xl border border-neutral-800 hover:border-neutral-600 text-sm" aria-label="Next">
+                <button id="nextBtn" class="px-3 py-2 rounded-xl border border-neutral-900 hover:border-neutral-700 text-sm" aria-label="Next">
                   <i data-lucide="skip-forward"></i>
                 </button>
               </div>
@@ -148,25 +146,25 @@
             <input id="seek" type="range" min="0" max="100" value="0" class="mt-4 w-full accent-white">
             <audio id="player" preload="metadata"></audio>
 
-            <!-- Autoplay overlay (for browsers that block) -->
-            <div id="playOverlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm rounded-xl grid place-items-center show-block">
+            <!-- Autoplay overlay -->
+            <div id="playOverlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm rounded-xl grid place-items-center show-block">
               <div class="text-center">
                 <button id="overlayPlay" class="px-5 py-3 rounded-2xl bg-white text-black font-semibold">
                   Tap to Play
                 </button>
-                <p class="text-xs muted mt-2">Autoplay is blocked on some browsers.</p>
+                <p class="text-xs subtle mt-2">Autoplay is blocked on some browsers.</p>
               </div>
             </div>
           </div>
 
-          <ul id="queue" class="mt-4 divide-y divide-neutral-800"></ul>
+          <ul id="queue" class="mt-4 divide-y divide-neutral-900"></ul>
         </div>
         <p class="text-xs subtle mt-2">Put your .mp3/.wav in <code>/assets/tracks/</code> and update the list below in the code.</p>
       </div>
     </div>
 
     <!-- EDIT: HERO IMAGE HERE -->
-    <div class="absolute inset-0 -z-10 pointer-events-none opacity-[0.16]" id="heroParallax"
+    <div class="absolute inset-0 -z-10 pointer-events-none opacity-[0.14]" id="heroParallax"
          style="background-image:url('assets/img/cover.jpg'); background-size:cover; background-position:center;">
     </div>
   </section>
@@ -195,12 +193,12 @@
       <!-- EDIT: HERO/ABOUT IMAGE -->
       <img alt="Bollytekk visual" src="assets/img/cover.jpg"
            onerror="this.src='https://picsum.photos/seed/bollytekk/900/600'"
-           class="rounded-2xl border border-neutral-800 w-full md:col-span-1 reveal">
+           class="rounded-2xl border border-neutral-900 w-full md:col-span-1 reveal">
       <div class="md:col-span-2 reveal">
         <!-- EDIT: ABOUT / DESCRIPTION (same copy as hero) -->
         <p class="muted">Bollytekk is a genre pioneered by Reesh, Roro, and Saif — a genre-bending fusion of traditional Indian sounds and modern hip-hop energy. Inspired by the deep rhythms of tablas, the shimmering melodies of sitars, and the cinematic sweep of Bollywood, Bollytekk blends them with hard-hitting trap drums, lush cloud-rap atmospheres, and intricate lyricism. It’s more than just music — it’s a bridge between cultures, honoring Indian heritage while pushing global sound forward. Every track is a celebration of beauty, identity, and rhythm, crafted to move both heart and head.</p>
         <div class="mt-4 flex gap-3">
-          <a class="px-4 py-2 rounded-xl border border-neutral-700 hover:border-neutral-500" href="#contact">Contact</a>
+          <a class="px-4 py-2 rounded-xl border border-neutral-800 hover:border-neutral-700" href="#contact">Contact</a>
           <a class="px-4 py-2 rounded-2xl bg-white text-black" href="#music">Play music</a>
         </div>
       </div>
@@ -212,7 +210,7 @@
     <h2 class="text-2xl sm:text-3xl font-bold">Press Kit</h2>
     <div class="accent-line mt-2 w-16"></div>
     <div class="mt-4 grid md:grid-cols-2 gap-6 items-start">
-      <div class="card p-4 reveal hoverable">
+      <div class="card hoverable hover-glow p-4 reveal">
         <h3 class="font-semibold">Downloads</h3>
         <!-- EDIT: PRESS KIT FILES HERE -->
         <ul class="list-disc list-inside muted mt-2">
@@ -224,7 +222,7 @@
         <p class="text-sm subtle mt-3">Drop files into <code>/assets/epk/</code> and update links if needed.</p>
       </div>
 
-      <div class="card p-4 reveal hoverable">
+      <div class="card hoverable hover-glow p-4 reveal">
         <h3 class="font-semibold">Highlights</h3>
         <ul class="list-disc list-inside muted mt-2">
           <li>Cross-cultural production blending tablas, sitars, and 808s.</li>
@@ -240,18 +238,18 @@
     <h2 class="text-2xl sm:text-3xl font-bold">Contact</h2>
     <div class="accent-line mt-2 w-16"></div>
     <div class="mt-4 grid md:grid-cols-2 gap-6 items-start">
-      <form class="card p-4 reveal hoverable" onsubmit="return false;">
+      <form class="card hoverable hover-glow p-4 reveal" onsubmit="return false;">
         <label class="text-sm subtle">Name</label>
-        <input class="w-full mt-1 p-3 rounded-xl bg-[#0c0c0d] border border-neutral-800" placeholder="Your name" />
+        <input class="w-full mt-1 p-3 rounded-xl bg-black border border-neutral-900 text-white placeholder:subtle" placeholder="Your name" />
         <label class="text-sm subtle mt-4">Email</label>
-        <input class="w-full mt-1 p-3 rounded-xl bg-[#0c0c0d] border border-neutral-800" placeholder="you@example.com" type="email" />
+        <input class="w-full mt-1 p-3 rounded-xl bg-black border border-neutral-900 text-white placeholder:subtle" placeholder="you@example.com" type="email" />
         <label class="text-sm subtle mt-4">Message</label>
-        <textarea class="w-full mt-1 p-3 rounded-xl bg-[#0c0c0d] border border-neutral-800" rows="5" placeholder="Booking / collab / press..."></textarea>
+        <textarea class="w-full mt-1 p-3 rounded-xl bg-black border border-neutral-900 text-white placeholder:subtle" rows="5" placeholder="Booking / collab / press..."></textarea>
         <a id="mailtoBtn" href="#" class="mt-4 inline-block px-5 py-3 rounded-2xl bg-white text-black font-semibold">Send via Email</a>
         <p class="text-xs subtle mt-2">Replace the email in the CONFIG section to enable this.</p>
       </form>
 
-      <div class="card p-4 reveal hoverable">
+      <div class="card hoverable hover-glow p-4 reveal">
         <h3 class="font-semibold">Find Us</h3>
         <p class="muted mt-2">Follow for releases, visuals, and show dates.</p>
         <div id="linkRow2" class="mt-4 flex flex-wrap gap-3 text-sm"></div>
@@ -260,8 +258,8 @@
   </section>
 
   <!-- Footer -->
-  <footer class="border-t border-neutral-800/80">
-    <div class="max-w-6xl mx-auto px-4 py-10 text-sm muted">
+  <footer class="border-t border-neutral-900">
+    <div class="max-w-6xl mx-auto px-4 py-10 text-sm subtle">
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <p>© <span id="year"></span> BOLLYTEKK. All rights reserved.</p>
         <a href="#top" class="hover:opacity-80">Back to top</a>
@@ -276,12 +274,9 @@
       <defs>
         <path id="circlePath" d="M50,50 m-35,0 a35,35 0 1,1 70,0 a35,35 0 1,1 -70,0" />
       </defs>
-      <!-- outer ring -->
-      <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(148,163,184,.25)" stroke-width="2"/>
-      <!-- hole -->
-      <circle cx="50" cy="50" r="7" fill="#0b0f16" stroke="rgba(148,163,184,.3)" stroke-width="2"/>
-      <!-- circular text -->
-      <text font-size="7" fill="#e5e7eb" font-weight="700" letter-spacing="2">
+      <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2"/>
+      <circle cx="50" cy="50" r="7" fill="#0a0a0a" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
+      <text font-size="7" fill="#ffffff" font-weight="700" letter-spacing="2">
         <textPath href="#circlePath" startOffset="0%">
           • BOLLYTEKK • BOLLYTEKK • BOLLYTEKK • BOLLYTEKK •
         </textPath>
@@ -294,7 +289,7 @@
     <div class="backdrop"></div>
     <div class="sheet">
       <div class="card p-6 relative">
-        <button id="closeModal" class="absolute top-4 right-4 p-2 rounded-lg border border-neutral-800 hover:border-neutral-600" aria-label="Close">
+        <button id="closeModal" class="absolute top-4 right-4 p-2 rounded-lg border border-neutral-900 hover:border-neutral-700" aria-label="Close">
           <i data-lucide="x"></i>
         </button>
         <div class="grid md:grid-cols-2 gap-6 items-center">
@@ -306,9 +301,9 @@
             <h3 class="text-2xl font-extrabold" id="modalTitle">—</h3>
             <p class="text-sm subtle" id="modalTime">0:00 / 0:00</p>
             <div class="mt-4 flex items-center gap-2">
-              <button class="p-3 rounded-xl border border-neutral-800 hover:border-neutral-600" id="modalPrev" aria-label="Previous"><i data-lucide="skip-back"></i></button>
-              <button class="p-3 rounded-xl border border-neutral-800 hover:border-neutral-600" id="modalPlay" aria-label="Play/Pause"><i data-lucide="play"></i></button>
-              <button class="p-3 rounded-xl border border-neutral-800 hover:border-neutral-600" id="modalNext" aria-label="Next"><i data-lucide="skip-forward"></i></button>
+              <button class="p-3 rounded-xl border border-neutral-900 hover:border-neutral-700" id="modalPrev" aria-label="Previous"><i data-lucide="skip-back"></i></button>
+              <button class="p-3 rounded-xl border border-neutral-900 hover:border-neutral-700" id="modalPlay" aria-label="Play/Pause"><i data-lucide="play"></i></button>
+              <button class="p-3 rounded-xl border border-neutral-900 hover:border-neutral-700" id="modalNext" aria-label="Next"><i data-lucide="skip-forward"></i></button>
             </div>
             <input id="modalSeek" type="range" min="0" max="100" value="0" class="mt-4 w-full accent-white">
           </div>
@@ -333,8 +328,8 @@
     const tracks = [
       { title: "bombay luv", src: "assets/tracks/bombay_luv.wav", tag: "Single" },
       { title: "luv_amma", src: "assets/tracks/luv_amma.wav", tag: "Single" },
-      { title: "namam", src: "assets/tracks/namam.wav", tag: "Single" },
-      { title: "Yagna", src: "assets/tracks/Yagna.wav", tag: "Single" }
+      { title: "namam",    src: "assets/tracks/namam.wav",      tag: "Single" },
+      { title: "Yagna",    src: "assets/tracks/Yagna.wav",      tag: "Single" }
     ];
 
     // Optional clip grid (assets/clips/*.mp4)
@@ -357,7 +352,7 @@
       links.forEach(l => {
         const a = document.createElement("a");
         a.href = l.url; a.target = "_blank"; a.rel = "noopener";
-        a.className = "px-4 py-2 rounded-2xl border border-neutral-800 hover:border-neutral-600 flex items-center gap-2";
+        a.className = "px-4 py-2 rounded-2xl border border-neutral-900 hover:border-neutral-700 flex items-center gap-2";
         a.setAttribute("aria-label", l.label);
         a.innerHTML = `<i data-lucide="${l.icon || 'link'}"></i><span>${l.label}</span>`;
         container.appendChild(a);
@@ -432,9 +427,9 @@
       grid.innerHTML = '';
       tracks.forEach((t, i) => {
         const card = document.createElement('div');
-        card.className = 'card hoverable p-4 transition cursor-pointer reveal';
+        card.className = 'card hoverable hover-glow p-4 transition cursor-pointer reveal';
         card.innerHTML = `<h4 class="font-semibold">${t.title}</h4><p class="text-sm subtle">${t.tag||""}</p>
-                          <button class="mt-3 px-4 py-2 rounded-xl border border-neutral-800 hover:border-neutral-600 flex items-center gap-2">
+                          <button class="mt-3 px-4 py-2 rounded-xl border border-neutral-900 hover:border-neutral-700 flex items-center gap-2">
                             <i data-lucide="play"></i><span>Play</span>
                           </button>`;
         card.querySelector('button').onclick = () => { loadTrack(i); player.play().catch(()=>{}); hideOverlay(); setPlayIcons(true); setCDPlaying(true); lucide.createIcons(); };
@@ -449,9 +444,9 @@
       grid.innerHTML = '';
       clips.forEach(c => {
         const wrap = document.createElement('div');
-        wrap.className = 'card hoverable p-3 reveal';
+        wrap.className = 'card hoverable hover-glow p-3 reveal';
         wrap.innerHTML = `
-          <video class="w-full rounded-xl border border-neutral-800" controls preload="metadata" playsinline>
+          <video class="w-full rounded-xl border border-neutral-900" controls preload="metadata" playsinline>
             <source src="${c.src}" type="video/mp4">
           </video>
           <div class="mt-2 flex items-center justify-between">
@@ -489,7 +484,7 @@
     modalNext.addEventListener('click', nextTrack);
 
     // Floating CD opens modal
-    floatingCD.addEventListener('click', () => {
+    document.getElementById('floatingCD').addEventListener('click', () => {
       modal.classList.add('show');
       modal.setAttribute('aria-hidden','false');
     });
@@ -541,21 +536,13 @@
 
     // Init
     document.getElementById('year').textContent = new Date().getFullYear();
+    lucide.createIcons();
     loadTrack(0);
     renderQueue();
     renderTrackCards();
     renderClips();
     tryAutoplay();
   </script>
-
-  <!--
-    ===== README mini (what changed) =====
-    • Color scheme: dark gradient background, white/gray text.
-    • Floating CD: bottom-right, replaces mini player bar. Spins when playing. Click to open modal with blur.
-    • Hover glow: cards now glow with a light-blue gradient effect and lift slightly.
-    • Smooth scroll + reveal animations intact.
-    • Edit hero image at: assets/img/cover.jpg (two places: HERO + ABOUT).
-    • Tracks/clips/links in CONFIG at top of <script>.
-  -->
+  
 </body>
 </html>
